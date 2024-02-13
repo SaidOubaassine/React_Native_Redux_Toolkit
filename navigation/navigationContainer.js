@@ -8,8 +8,16 @@ const Stack = createNativeStackNavigator()
 function PostsStack(){
     return(
         <Stack.Navigator>
-            <Stack.Screen name="Posts" component={Posts}/>
-            <Stack.Screen name="Detail" component={PostDetail} />
+            <Stack.Screen 
+            name="Posts" 
+            component={Posts} 
+            options={{
+                
+            }}/>
+            <Stack.Screen 
+            name="Detail" 
+            component={PostDetail} 
+            />
         </Stack.Navigator>
     )
 }

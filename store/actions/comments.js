@@ -20,7 +20,6 @@ export const getComments = (id) => {
               resData[key].postId,
               resData[key].id,
               resData[key].name,
-              resData[key].name,
               resData[key].email,
               resData[key].body
               )

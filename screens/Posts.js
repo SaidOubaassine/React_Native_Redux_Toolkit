@@ -7,13 +7,18 @@ import {
   Text,
   ActivityIndicator,
   Button,
-  Pressable
+  Pressable,
+  SafeAreaView,
+  Platform,
+  TouchableWithoutFeedback,
+  ScrollView
 } from "react-native";
 import { useCallback, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getPosts } from "../store/actions/posts";
 import { deletePost } from "../store/reducers/posts";
-import Post from "../components/Post"
+import Post from "../components/Post";
+import Filter from "../components/Filter";
 
 function Posts(props) {
   const [isLoading, setIsLoading] = useState(false);
@@ -71,40 +76,38 @@ function Posts(props) {
     );
   }
 
+
+  
   return (
       <>
-      <View style={styles.filter}>
-        <TextInput placeholder="Search" onChangeText={(text)=> onChangeText(text)} style={styles.search}/>
-        <TextInput placeholder="pagination" inputMode="numeric" maxLength={2} onChangeText={onChangeNumber} style={styles.pagination}/>
-      </View>
-      <FlatList
-      onRefresh={loadPosts}
-      refreshing={onRefreshing}
-      style={styles.list}
-      data={posts.filter((post)=> (post.id <= number && post.title.includes(search) ))}
-      keyExtractor={(item) => item.id}
-      renderItem={(itemData) => (
-          <View key={itemData.item.id}>
-            <Post 
-          key={itemData.item.userId}
-          item={itemData.item} 
-          onClick={(event)=>{
-              props.navigation.navigate("Detail", {
-                id: itemData.item.id,
-                title: itemData.item.title,
-                body: itemData.item.body
-          })}}
-          onDelete={async()=>{
-            try{
-              await dispatch(deletePost(itemData.item.id))
-            }catch(err){
-              console.log(err)
-            }
-          }}
-      />
-          </View>
-      )}
-    />
+        <Filter
+          onSearch={(text)=> {onChangeText(text)}}
+          onPagination={(text)=> { if(text !== "" && text <= 100 && text > 0) onChangeNumber(text) }} 
+        />
+        <FlatList
+          onRefresh={loadPosts}
+          refreshing={onRefreshing}
+          style={styles.list}
+          data={posts.filter((post)=> (post.id <= number && post.title.includes(search) ))}
+          keyExtractor={(item) => item.id}
+          renderItem={(itemData) => (
+            <View key={itemData.item.id}>
+              <Post 
+                key={itemData.item.userId}
+                item={itemData.item} 
+                onClick={(event)=>{
+                  props.navigation.navigate("Detail", {
+                    id: itemData.item.id,
+                    title: itemData.item.title,
+                    body: itemData.item.body
+                })}}
+                onDelete={async()=>{
+                  await dispatch(deletePost(itemData.item.id))
+                }}
+        />
+            </View>
+          )}
+        />
       </>
   );
 }
@@ -114,32 +117,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-  },
-  search:{
-    height: 40,
-    width: 200,
-    backgroundColor: "white",
-    borderColor: "black",
-    borderWidth: 2,
-    margin: 10,
-    paddingLeft: 10
-  },
-  pagination:{
-    height: 40,
-    width: 100,
-    backgroundColor: "white",
-    borderColor: "black",
-    borderWidth: 2,
-    margin: 10,
-    paddingLeft: 10
-  },
-  list:{
-    
-  },
-  filter:{
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between"
   }
 });
 
